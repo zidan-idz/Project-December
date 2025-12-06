@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project-December — It's December Again</title>
+    <meta name="description" content="A melancholic space to release your burdens at the end of the year">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/design.css">
+</head>
+
+<body>
+    <!-- Background Music - SHARED ACROSS ALL PAGES -->
+    <audio id="background-music" loop>
+        <source src="/assets/music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music Control - SHARED ACROSS ALL PAGES -->
+    <div class="music-control" id="music-control">
+        <button id="music-toggle" aria-label="Toggle music">
+            <span class="music-icon playing">♪</span>
+            <span class="music-icon paused">⏸</span>
+        </button>
+    </div>
+
+    <!-- App Container - Content will be rendered here -->
+    <div class="my-3">
+        <div id="app"></div>
+    </div>
+
+    <!-- Modal - SHARED ACROSS ALL PAGES -->
+    <div id="modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+            <div class="modal-content">
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="/scripts/config.js"></script>
+    <script src="/scripts/app.js"></script>
+</body>
+
+</html>
