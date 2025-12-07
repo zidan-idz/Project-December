@@ -1,7 +1,4 @@
-/* ============================================ */
-/* CSS VARIABLES */
-/* ============================================ */
-
+/* --- VARIABLES --- */
 :root {
     /* Colors */
     --color-bg-primary: #0a0e1a;
@@ -18,21 +15,18 @@
     --font-serif: 'Georgia', 'Times New Roman', serif;
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 
-    /* Spacing */
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 2rem;
-    --spacing-lg: 4rem;
+    /* Fluid Spacing */
+    --spacing-xs: clamp(0.25rem, 1vw, 0.5rem);
+    --spacing-sm: clamp(0.75rem, 2vw, 1rem);
+    --spacing-md: clamp(1.5rem, 4vw, 2rem);
+    --spacing-lg: clamp(2.5rem, 6vw, 4rem);
 
     /* Transitions */
     --transition-fast: 0.3s ease;
     --transition-normal: 0.4s ease-out;
 }
 
-/* ============================================ */
-/* RESET & BASE */
-/* ============================================ */
-
+/* --- RESET & BASE --- */
 * {
     margin: 0;
     padding: 0;
@@ -48,10 +42,7 @@ body {
     min-height: 100vh;
 }
 
-/* ============================================ */
-/* TYPOGRAPHY */
-/* ============================================ */
-
+/* --- TYPOGRAPHY --- */
 h1,
 h2,
 h3,
@@ -72,15 +63,11 @@ a:hover {
     color: white;
 }
 
-/* Bootstrap Override */
 .lead {
     color: var(--color-text-secondary);
 }
 
-/* ============================================ */
-/* UTILITY CLASSES - ANIMATIONS */
-/* ============================================ */
-
+/* --- ANIMATION UTILITIES --- */
 .animate-fade-in {
     animation: fadeIn 2s ease-out;
 }
@@ -97,10 +84,7 @@ a:hover {
     animation: pulse 2s ease-in-out infinite;
 }
 
-/* ============================================ */
-/* BUTTON BASE */
-/* ============================================ */
-
+/* --- BUTTONS --- */
 button {
     font-family: var(--font-sans);
     cursor: pointer;
@@ -133,7 +117,6 @@ button:hover::before {
     height: 300px;
 }
 
-/* Link Buttons Base */
 a.btn-primary,
 a.btn-december,
 a.btn-secondary,
@@ -149,11 +132,7 @@ a.btn-back {
     font-weight: 600;
 }
 
-/* ============================================ */
-/* BUTTON VARIANTS */
-/* ============================================ */
-
-/* Primary - Glassmorphism Blue */
+/* Primary Button */
 .btn-primary {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%);
     backdrop-filter: blur(10px);
@@ -175,7 +154,7 @@ a.btn-back {
     transform: translateY(-1px);
 }
 
-/* December - Glowing Border */
+/* December Button */
 .btn-december {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
     backdrop-filter: blur(10px);
@@ -214,7 +193,7 @@ a.btn-back {
     opacity: 1;
 }
 
-/* Secondary - Subtle */
+/* Secondary Button */
 .btn-secondary {
     background: transparent;
     color: var(--color-text-secondary);
@@ -231,7 +210,7 @@ a.btn-back {
     transform: translateY(-2px);
 }
 
-/* Back - Animated Arrow */
+/* Back Button */
 .btn-back {
     background: rgba(255, 255, 255, 0.05);
     color: var(--color-text-secondary);
@@ -250,7 +229,7 @@ a.btn-back {
     box-shadow: -5px 0 15px rgba(59, 130, 246, 0.2);
 }
 
-/* Refresh - Rotating */
+/* Refresh Button */
 .btn-refresh {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
     backdrop-filter: blur(10px);
@@ -268,10 +247,7 @@ a.btn-back {
     box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
 }
 
-/* ============================================ */
-/* FORM COMPONENTS */
-/* ============================================ */
-
+/* --- FORMS --- */
 .confession-form {
     background: var(--color-bg-secondary);
     padding: var(--spacing-md);
@@ -302,7 +278,6 @@ textarea:focus {
     border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Character Count */
 .char-count {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
@@ -316,7 +291,6 @@ textarea:focus {
     color: var(--color-error);
 }
 
-/* Form Messages */
 .form-success {
     color: var(--color-success);
     margin: 1rem 0;
@@ -339,7 +313,7 @@ textarea:focus {
     font-style: italic;
 }
 
-/* December Locked */
+/* --- LOCKED STATE --- */
 .december-locked {
     text-align: center;
     padding: var(--spacing-lg);
@@ -362,10 +336,7 @@ textarea:focus {
     font-style: italic;
 }
 
-/* ============================================ */
-/* SNOWFALL PAGE */
-/* ============================================ */
-
+/* --- SNOWFALL PAGE --- */
 .snowfall-page {
     height: 100vh;
     overflow: hidden;
@@ -373,14 +344,13 @@ textarea:focus {
     background: radial-gradient(circle at bottom, #1a2236 0%, #0a0e1a 100%);
 }
 
-.controls {
+.controls,
+.snowfall-info {
     position: relative;
     z-index: 10;
 }
 
 .snowfall-info {
-    position: relative;
-    z-index: 10;
     pointer-events: none;
 }
 
@@ -391,7 +361,6 @@ textarea:focus {
     text-transform: uppercase;
 }
 
-/* Snowflake */
 .snowflake {
     position: absolute;
     background: white;
@@ -401,6 +370,17 @@ textarea:focus {
     transition: transform 0.3s;
     filter: blur(1px);
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    z-index: 50;
+}
+
+.snowflake::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    border-radius: 50%;
 }
 
 .snowflake:hover {
@@ -409,10 +389,7 @@ textarea:focus {
     z-index: 100;
 }
 
-/* ============================================ */
-/* MODAL */
-/* ============================================ */
-
+/* --- MODAL --- */
 .modal {
     position: fixed;
     top: 0;
@@ -424,13 +401,14 @@ textarea:focus {
     justify-content: center;
     align-items: center;
     opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
+    visibility: hidden;
+    /* Fix: prevents blocking clicks when inactive */
+    transition: opacity 0.3s, visibility 0.3s;
 }
 
 .modal.active {
     opacity: 1;
-    pointer-events: auto;
+    visibility: visible;
 }
 
 .modal-overlay {
@@ -445,15 +423,25 @@ textarea:focus {
 
 .modal-container {
     position: relative;
-    background: var(--color-bg-secondary);
-    padding: 3rem;
-    border-radius: 16px;
+    background: transparent;
+    padding: 0;
     max-width: 600px;
     width: 90%;
+    border: none;
+    box-shadow: none;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+}
+
+.modal-content {
+    background: #1a1f2e;
+    padding: clamp(1.5rem, 5vw, 3rem);
+    border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     transform: translateY(20px);
     transition: transform 0.3s;
+    width: 100%;
 }
 
 .modal.active .modal-container {
@@ -462,39 +450,48 @@ textarea:focus {
 
 .modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: transparent;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
     color: var(--color-text-secondary);
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     padding: 0.5rem;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .modal-close:hover {
     color: white;
-    transform: rotate(90deg);
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
 }
 
 .modal-confession {
-    font-size: 1.3em;
-    line-height: 1.8;
+    background: transparent;
+    color: var(--color-text-primary);
+    font-size: clamp(1rem, 4vw, 1.3em);
+    line-height: 1.6;
     margin-bottom: 2rem;
     white-space: pre-wrap;
 }
 
 .modal-date {
+    background: transparent;
     font-family: var(--font-sans);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--color-text-secondary);
     text-align: right;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 1rem;
 }
 
-/* ============================================ */
-/* MUSIC CONTROL */
-/* ============================================ */
-
+/* --- MUSIC CONTROL --- */
 .music-control {
     position: fixed;
     bottom: 2rem;
@@ -541,10 +538,7 @@ textarea:focus {
     display: none;
 }
 
-/* ============================================ */
-/* LOADING & EMPTY STATES */
-/* ============================================ */
-
+/* --- LOADING & EMPTY STATES --- */
 .loading,
 .empty-state {
     position: absolute;
@@ -571,10 +565,7 @@ textarea:focus {
     opacity: 0.7;
 }
 
-/* ============================================ */
-/* KEYFRAMES */
-/* ============================================ */
-
+/* --- ANIMATION KEYFRAMES --- */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -625,10 +616,7 @@ textarea:focus {
     }
 }
 
-/* ============================================ */
-/* RESPONSIVE */
-/* ============================================ */
-
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .modal-container {
         padding: 1.5rem;

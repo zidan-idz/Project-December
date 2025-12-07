@@ -1,15 +1,21 @@
-// ============================================
-// PROJECT DECEMBER - Single Page Application
-// ============================================
-
+// --- STATE ---
 let currentPage = 'home';
 let confessions = [];
 let musicPlaying = false;
 
-// ============================================
-// MUSIC CONTROL - SEAMLESS ACROSS PAGES
-// ============================================
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    initMusic();
 
+    const path = window.location.pathname;
+    if (path === '/snowfall') currentPage = 'snowfall';
+    else if (path === '/about') currentPage = 'about';
+    else currentPage = 'home';
+
+    render();
+});
+
+// --- MUSIC CONTROL ---
 function initMusic() {
     const audio = document.getElementById('background-music');
     const toggle = document.getElementById('music-toggle');
@@ -17,7 +23,6 @@ function initMusic() {
 
     if (!audio || !toggle || !control) return;
 
-    // Check if music was playing from localStorage
     const wasPlaying = localStorage.getItem('musicPlaying') === 'true';
 
     if (wasPlaying) {
@@ -27,7 +32,6 @@ function initMusic() {
         }).catch(err => console.log('Audio autoplay prevented:', err));
     }
 
-    // Auto-play on first user interaction
     document.addEventListener('click', () => {
         if (!musicPlaying) {
             audio.play().then(() => {
@@ -38,7 +42,6 @@ function initMusic() {
         }
     }, { once: true });
 
-    // Toggle music
     toggle.addEventListener('click', (e) => {
         e.stopPropagation();
         if (musicPlaying) {
@@ -55,15 +58,12 @@ function initMusic() {
     });
 }
 
-// ============================================
-// ROUTING & PAGE RENDERING
-// ============================================
-
+// --- ROUTING ---
 function navigateTo(page) {
+    closeModal(); // Ensure modal is closed on navigation
     currentPage = page;
     render();
 
-    // Update URL without reload
     const pageMap = {
         'home': '/',
         'snowfall': '/snowfall',
@@ -72,6 +72,14 @@ function navigateTo(page) {
     history.pushState({ page }, '', pageMap[page] || '/');
 }
 
+window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.page) {
+        currentPage = e.state.page;
+        render();
+    }
+});
+
+// --- RENDER ENGINE ---
 function render() {
     const app = document.getElementById('app');
     app.innerHTML = '';
@@ -82,20 +90,15 @@ function render() {
     else if (currentPage === 'about') renderAbout();
 }
 
-// ============================================
-// HOME PAGE
-// ============================================
-
+// --- HOME PAGE ---
 function renderHome() {
     const app = document.getElementById('app');
     const isDecember = CONFIG.isDecember();
 
     app.innerHTML = `
         <div class="home-container">
-            <!-- Background Blur Circle -->
             <div class="bg-blur-circle"></div>
             
-            <!-- Title with Badge -->
             <div class="title-group">
                 <div class="title-badge-wrapper">
                     <div class="seasonal-badge">${isDecember ? "It's December Again" : "Not December Yet"}</div>
@@ -103,16 +106,13 @@ function renderHome() {
                 <h1 class="title-main text-center mb-3">Project-December</h1>
             </div>
             
-            <!-- Subtitle (Outside Box) -->
             <p class="subtitle-main text-center mb-5">
                 Sebuah tempat di internet untuk melepaskan "beban" di akhir tahun.<br>
                 Anonim. Tanpa penghakiman. Hanya kejujuran.
             </p>
 
-            <!-- Glassmorphism Form Box -->
             <div class="form-box p-4 mb-5" id="form-container"></div>
 
-            <!-- Bottom Button Links -->
             <div class="btn-group-bottom d-flex gap-3 mb-4">
                 <button class="btn-pill" onclick="navigateTo('snowfall')">
                     <i class="bi bi-quote me-1"></i>See the snow fall
@@ -121,8 +121,6 @@ function renderHome() {
                     <i class="bi bi-info-circle me-1"></i>About this site
                 </button>
             </div>
-
-
         </div>
     `;
 
@@ -161,7 +159,7 @@ function renderForm() {
     } else {
         container.innerHTML = `
             <div class="locked-state text-center py-3">
-                <div class="lock-emoji">🔒</div>
+                <div><i class="bi bi-lock"></i></div>
                 <h2>Come Back in December</h2>
                 <p>Halaman ini hanya membuka hatinya di bulan Desember.</p>
                 <p class="hint">Tapi kamu masih bisa membaca tulisan orang lain di bawah.</p>
@@ -170,6 +168,7 @@ function renderForm() {
     }
 }
 
+// --- CONFESSION LOGIC ---
 function updateCharCount() {
     const textarea = document.getElementById('confession-input');
     const count = textarea.value.length;
@@ -189,22 +188,16 @@ async function submitConfession() {
     const textarea = document.getElementById('confession-input');
     const messageEl = document.getElementById('form-message');
     const text = textarea.value.trim();
-
     const submitBtn = document.querySelector('.btn-submit');
     const originalBtnText = submitBtn.textContent;
 
     messageEl.innerHTML = '';
 
     if (text.length < CONFIG.CHAR_MIN || text.length > CONFIG.CHAR_MAX) {
-        messageEl.innerHTML = `
-            <div class="form-error">
-                Tulisanmu harus antara ${CONFIG.CHAR_MIN}-${CONFIG.CHAR_MAX} karakter.
-            </div>
-        `;
+        messageEl.innerHTML = `<div class="form-error">Tulisanmu harus antara ${CONFIG.CHAR_MIN}-${CONFIG.CHAR_MAX} karakter.</div>`;
         return;
     }
 
-    // Set Loading State
     submitBtn.textContent = 'Melepaskan...';
     submitBtn.disabled = true;
     submitBtn.style.opacity = '0.7';
@@ -219,31 +212,16 @@ async function submitConfession() {
 
         const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Gagal melepaskan tulisanmu');
-        }
+        if (!response.ok) throw new Error(data.error || 'Gagal melepaskan tulisanmu');
 
-        messageEl.innerHTML = `
-            <div class="form-success">
-                ✓ ${data.message || 'Tulisanmu telah dilepaskan ke langit Desember'}
-            </div>
-        `;
-
+        messageEl.innerHTML = `<div class="form-success">✓ ${data.message || 'Tulisanmu telah dilepaskan ke langit Desember'}</div>`;
         textarea.value = '';
         updateCharCount();
 
-        setTimeout(() => {
-            messageEl.innerHTML = '';
-        }, 5000);
-
+        setTimeout(() => { messageEl.innerHTML = ''; }, 5000);
     } catch (error) {
-        messageEl.innerHTML = `
-            <div class="form-error">
-                ${error.message}
-            </div>
-        `;
+        messageEl.innerHTML = `<div class="form-error">${error.message}</div>`;
     } finally {
-        // Reset Button State
         submitBtn.textContent = originalBtnText;
         submitBtn.disabled = false;
         submitBtn.style.opacity = '';
@@ -251,19 +229,14 @@ async function submitConfession() {
     }
 }
 
-// ============================================
-// SNOWFALL PAGE
-// ============================================
-
+// --- SNOWFALL PAGE ---
 function renderSnowfall() {
     const app = document.getElementById('app');
 
     app.innerHTML = `
         <div class="page-container snowfall-page">
-            <!-- Background Blur Circle -->
             <div class="bg-blur-circle"></div>
             
-            <!-- Navigation Header -->
             <div class="nav-header justify-content-between">
                 <button class="btn-pill-sm" onclick="navigateTo('home')">
                     <i class="bi bi-arrow-left"></i> Back
@@ -273,10 +246,8 @@ function renderSnowfall() {
                 </button>
             </div>
             
-            <!-- Hint -->
             <p class="page-hint text-center fst-italic mt-5 mb-3">Klik salju untuk membaca tulisan seseorang...</p>
             
-            <!-- Snowfall Container -->
             <div class="snowfall-container" id="snowfall-container"></div>
         </div>
     `;
@@ -286,7 +257,6 @@ function renderSnowfall() {
 
 async function loadConfessions() {
     const container = document.getElementById('snowfall-container');
-
     if (!container) return;
 
     container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Mengumpulkan tulisan...</p></div>';
@@ -338,6 +308,11 @@ function createSnowflake(confession, index) {
     snowflake.style.height = size + 'px';
     snowflake.style.animation = `fall ${duration}s linear ${delay}s infinite`;
 
+    snowflake.addEventListener('animationiteration', () => {
+        const newX = Math.random() * window.innerWidth;
+        snowflake.style.left = newX + 'px';
+    });
+
     snowflake.onclick = (e) => {
         e.stopPropagation();
         showModal(confession);
@@ -346,58 +321,34 @@ function createSnowflake(confession, index) {
     return snowflake;
 }
 
-// ============================================
-// ABOUT PAGE
-// ============================================
-
+// --- ABOUT PAGE ---
 function renderAbout() {
     const app = document.getElementById('app');
 
     app.innerHTML = `
         <div class="page-container about-page">
-            <!-- Background Blur Circle -->
             <div class="bg-blur-circle"></div>
             
-            <!-- Navigation Header -->
             <div class="nav-header justify-content-between">
                 <button class="btn-pill-sm" onclick="navigateTo('home')">
                     <i class="bi bi-arrow-left"></i> Back
                 </button>
-
-                <button class="btn-pill-sm" style="visibility: hidden;">
-                    Dummy
-                </button>
+                <div style="width: 80px;"></div> <!-- Spacer -->
             </div>
-
             
-            <!-- About Content Box -->
-            <div class="about-glass-box p-1 p-lg-5">
-                <h1 class="about-title text-center mb-4">Tentang Project-December</h1>
+            <div class="about-glass-box py-4 px-3 p-lg-5">
+                <h1 class="about-title text-center mb-5">Tentang Project-December</h1>
                 
-                <section class="about-section mb-4">
+                <section class="about-section mb-5">
                     <h2>Apa itu Project-December?</h2>
-                    <p>
-                        Project-December adalah platform web musiman yang hanya berfungsi penuh setiap bulan Desember. 
-                        Situs ini menjadi ruang anonim bagi siapa pun yang ingin menuliskan pengalaman, penyesalan, 
-                        kenangan, atau konflik emosional yang mereka bawa sepanjang tahun.
-                    </p>
-                    <p>
-                        Setiap tulisan muncul sebagai animasi butiran salju yang jatuh di layar. Masing-masing butir 
-                        salju berisi satu tulisan. Ketika diklik, salju itu pecah menjadi paragraf tulisan lengkap 
-                        beserta tanggal pembuatannya.
-                    </p>
-                    <p class="about-italic">
-                        Project-December adalah tempat sederhana di internet untuk meletakkan "beban" menjelang akhir tahun.
-                    </p>
+                    <p>Project-December adalah platform web musiman yang hanya berfungsi penuh setiap bulan Desember. Situs ini menjadi ruang anonim bagi siapa pun yang ingin menuliskan pengalaman, penyesalan, kenangan, atau konflik emosional yang mereka bawa sepanjang tahun.</p>
+                    <p>Setiap tulisan muncul sebagai animasi butiran salju yang jatuh di layar. Masing-masing butir salju berisi satu tulisan. Ketika diklik, salju itu pecah menjadi paragraf tulisan lengkap beserta tanggal pembuatannya.</p>
+                    <p class="about-italic">Project-December adalah tempat sederhana di internet untuk meletakkan "beban" menjelang akhir tahun.</p>
                 </section>
 
-                <section class="about-section mb-4">
+                <section class="about-section mb-5">
                     <h2>Kenapa Project-December dibuat?</h2>
-                    <p>
-                        Setiap kali Desember tiba, orang-orang cenderung menjadi lebih reflektif. Berbagai hal yang 
-                        terkubur selama tahun itu muncul kembali: penyesalan, nostalgia, kehilangan, atau hal-hal 
-                        yang tidak pernah selesai.
-                    </p>
+                    <p>Setiap kali Desember tiba, orang-orang cenderung menjadi lebih reflektif. Berbagai hal yang terkubur selama tahun itu muncul kembali: penyesalan, nostalgia, kehilangan, atau hal-hal yang tidak pernah selesai.</p>
                     <p>Project-December adalah tempat sederhana di internet untuk memberi ruang tersebut. Tanpa identitas, tanpa tekanan sosial, tanpa tuntutan pencitraan.</p>
                     <ul class="about-list">
                         <li>Mengakui bahwa tahun ini berat</li>
@@ -408,66 +359,42 @@ function renderAbout() {
                     <p class="about-italic">Situs ini adalah ruang aman untuk jujur.</p>
                 </section>
 
-                <section class="about-section mb-4">
+                <section class="about-section mb-5">
                     <h2>Mengapa konsepnya seperti ini?</h2>
                     <ul class="about-list">
-                        <li><strong>Anonim membuat tulisan lebih jujur</strong> <span class="bi bi-arrow-right"></span>
- Tanpa identitas, tulisan menjadi lebih apa adanya, langsung dari hati, tanpa topeng.</li>
-                        <li><strong>Hanya aktif di bulan Desember</strong> <span class="bi bi-arrow-right"></span>
- Pembatasan waktu menciptakan tradisi dan momentum emosional. Setahun sekali memberi rasa kesempatan yang langka.</li>
-                        <li><strong>Salju sebagai simbol "beban" yang jatuh</strong> <span class="bi bi-arrow-right"></span>
- Setiap tulisan adalah serpihan kecil dari seseorang. Semuanya turun pelan-pelan, masing-masing membawa beratnya sendiri.</li>
-                        <li><strong>Random karena semua orang sama</strong> <span class="bi bi-arrow-right"></span>
- Tidak ada yang tahu siapa menulis apa. Namun pembaca sering menemukan kalimat yang terasa akrab.</li>
-                        <li><strong>Menjaga ruang ini tetap aman</strong> <span class="bi bi-arrow-right"></span>
- Kebebasan bukan berarti melukai. Kami menyaring kata-kata kasar agar tempat ini tetap nyaman bagi siapa pun yang sedang rapuh.</li>
+                        <li><strong>Anonim membuat tulisan lebih jujur.</strong> Tanpa identitas, tulisan menjadi lebih apa adanya, langsung dari hati, tanpa topeng.</li>
+                        <li><strong>Hanya aktif di bulan Desember.</strong> Pembatasan waktu menciptakan tradisi dan momentum emosional. Setahun sekali memberi rasa kesempatan yang langka.</li>
+                        <li><strong>Salju sebagai simbol "beban" yang jatuh.</strong> Setiap tulisan adalah serpihan kecil dari seseorang. Semuanya turun pelan-pelan, masing-masing membawa beratnya sendiri.</li>
+                        <li><strong>Random karena semua orang sama.</strong> Tidak ada yang tahu siapa menulis apa. Namun pembaca sering menemukan kalimat yang terasa akrab.</li>
+                        <li><strong>Menjaga ruang ini tetap aman.</strong> Kebebasan bukan berarti melukai. Kami menyaring kata-kata kasar agar tempat ini tetap nyaman bagi siapa pun yang sedang rapuh.</li>
                     </ul>
                 </section>
 
-                <section class="about-section mb-4">
+                <section class="about-section mb-5">
                     <h2>Kebiasaan Internet</h2>
-                    <p>
-                        Selama bertahun-tahun, komunitas internet punya kebiasaan tidak tertulis: memutar lagu "December" 
-                        dari Neck Deep ketika bulan Desember dimulai. Tradisi ini tersebar secara organik di forum dan 
-                        media sosial, menjadi semacam penanda emosional bahwa tahun hampir berakhir.
-                    </p>
-                    <p>
-                        Project-December mengambil inspirasi dari fenomena tersebut.
-                    </p>
+                    <p>Selama bertahun-tahun, komunitas internet punya kebiasaan tidak tertulis: memutar lagu "December" dari Neck Deep ketika bulan Desember dimulai. Tradisi ini tersebar secara organik di forum dan media sosial, menjadi semacam penanda emosional bahwa tahun hampir berakhir.</p>
+                    <p>Project-December mengambil inspirasi dari fenomena tersebut.</p>
                 </section>
 
-                <section class="about-section mb-4">
+                <section class="about-section mb-5">
                     <h2>Bagaimana cara kerja situs ini?</h2>
-                    <p><strong>Home Page</strong> <span class="bi bi-arrow-right"></span>
- Menampilkan kotak input tulisan yang aktif hanya di bulan Desember. Di luar Desember, pengunjung hanya dapat membaca.</p>
-                    <p><strong>Snowfall Page</strong> <span class="bi bi-arrow-right"></span>
- Bagian inti situs. Animasi salju sebagai representasi tulisan. Klik salju untuk membuka isi tulisan.</p>
-                    <p><strong>About Page</strong> <span class="bi bi-arrow-right"></span>
- (Halaman ini). Menjelaskan konsep dan aturan anonim.</p>
+                    <ul class="about-list">
+                        <li><strong>Home Page:</strong> Menampilkan kotak input tulisan yang aktif hanya di bulan Desember. Di luar Desember, pengunjung hanya dapat membaca.</li>
+                        <li><strong>Snowfall Page:</strong> Bagian inti situs. Animasi salju sebagai representasi tulisan. Klik salju untuk membuka isi tulisan.</li>
+                        <li><strong>About Page:</strong> (Halaman ini). Menjelaskan konsep dan aturan anonim.</li>
+                    </ul>
                 </section>
 
-                <section class="about-section">
-                    <h2>Tujuan </h2>
-                    <p>
-                        Project-December bukan ruang yang menuntut kesempurnaan. Tidak ada standar harus cantik, produktif, 
-                        bahagia, atau tampil keren. Yang ada hanyalah manusia dengan ceritanya masing-masing.
-                    </p>
-                    <p class="about-italic">
-                        Project-December ini adalah tradisi tahunan: membaca luka dan harapan kecil milik orang lain, 
-                        sambil meninggalkan sesuatu yang ingin dilepas sebelum tahun berakhir.
-                    </p>
+                <section class="about-section mb-5">
+                    <h2>Tujuan</h2>
+                    <p>Project-December bukan ruang yang menuntut kesempurnaan. Tidak ada standar harus cantik, produktif, bahagia, atau tampil keren. Yang ada hanyalah manusia dengan ceritanya masing-masing.</p>
+                    <p>Project-December ini adalah tradisi tahunan: membaca luka dan harapan kecil milik orang lain, sambil meninggalkan sesuatu yang ingin dilepas sebelum tahun berakhir.</p>
                 </section>
 
                 <section class="about-section about-credit">
                     <p>"Project-December" dibuat oleh <strong>Zidan IDz</strong></p>
-
-                    <section class="about-section about-note mt-0">
-                        <p class="text-center about-italic">
-                            Hanya manusia biasa yang punya sisi emosional dan kebetulan bisa ngoding dikit
-                        </p>
-                    </section>
-
-                    <div class="about-social mt-2 d-flex gap-4 justify-content-center">
+                    <p class="small opacity-75">Hanya manusia biasa yang punya sisi emosional dan kebetulan bisa ngoding dikit</p>
+                    <div class="about-social mt-3 d-flex gap-4 justify-content-center">
                         <a href="https://facebook.com/muhammadraid.zaidani" target="_blank"><i class="bi bi-facebook"></i></a>
                         <a href="https://instagram.com/zidan_idz" target="_blank"><i class="bi bi-instagram"></i></a>
                         <a href="https://github.com/zidan-idz" target="_blank"><i class="bi bi-github"></i></a>
@@ -478,10 +405,7 @@ function renderAbout() {
     `;
 }
 
-// ============================================
-// MODAL
-// ============================================
-
+// --- MODAL CONTROLLER ---
 function showModal(confession) {
     const modal = document.getElementById('modal');
     const modalBody = document.getElementById('modal-body');
@@ -489,9 +413,7 @@ function showModal(confession) {
     const date = new Date(confession.created_at).toLocaleDateString('id-ID', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        day: 'numeric'
     });
 
     modalBody.innerHTML = `
@@ -509,34 +431,6 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
-// Close modal on Escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
-});
-
-// ============================================
-// BROWSER HISTORY HANDLING
-// ============================================
-
-window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.page) {
-        currentPage = e.state.page;
-        render();
-    }
-});
-
-// ============================================
-// INITIALIZATION
-// ============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    initMusic();
-
-    // Handle initial route
-    const path = window.location.pathname;
-    if (path === '/snowfall') currentPage = 'snowfall';
-    else if (path === '/about') currentPage = 'about';
-    else currentPage = 'home';
-
-    render();
 });

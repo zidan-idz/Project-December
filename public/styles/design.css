@@ -1,6 +1,4 @@
-/* ============================================ */
-/* UTILITY CLASSES - COLORS & BACKGROUNDS */
-/* ============================================ */
+/* --- UTILITIES - COLORS & BACKGROUNDS --- */
 
 /* Background Colors */
 .bg-dark-50 {
@@ -69,9 +67,7 @@
     border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
-/* ============================================ */
-/* UTILITY CLASSES - EFFECTS & SHAPES */
-/* ============================================ */
+/* --- UTILITIES - EFFECTS & SHAPES --- */
 
 /* Glassmorphism */
 .glass {
@@ -107,9 +103,7 @@
     transition: all 0.3s ease;
 }
 
-/* ============================================ */
-/* LAYOUT COMPONENTS */
-/* ============================================ */
+/* --- LAYOUT COMPONENTS --- */
 
 /* Home Page Container */
 .home-container {
@@ -144,12 +138,10 @@
     position: relative;
     overflow: hidden;
     background: var(--color-bg-primary);
+    padding: 0 var(--spacing-sm);
 }
 
-/* ============================================ */
-/* BADGES & LABELS */
-/* ============================================ */
-
+/* --- BADGES & LABELS --- */
 .seasonal-badge {
     background: #2C2C2C;
     color: rgba(255, 255, 255, 0.85);
@@ -160,7 +152,7 @@
     font-style: italic;
 }
 
-/* Title Group - Badge positioned at top right of title */
+/* Title Group */
 .title-group {
     position: relative;
     text-align: center;
@@ -175,22 +167,22 @@
     margin-bottom: 0.5rem;
 }
 
-/* ============================================ */
-/* TYPOGRAPHY */
-/* ============================================ */
-
+/* --- TYPOGRAPHY --- */
 .title-main {
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 400;
     color: var(--color-text-primary);
     letter-spacing: 0.02em;
+    line-height: 1.2;
 }
 
 .subtitle-main {
-    font-size: 1rem;
-    line-height: 1.8;
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    line-height: 1.6;
     color: var(--color-text-secondary);
     max-width: 600px;
+    width: 90%;
+    margin: 0 auto 2rem;
 }
 
 .page-title {
@@ -206,18 +198,15 @@
     z-index: 10;
 }
 
-/* ============================================ */
-/* FORM COMPONENTS */
-/* ============================================ */
-
-/* Form Box - Glass Effect */
+/* --- FORM COMPONENTS --- */
 .form-box {
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     max-width: 550px;
-    width: 100%;
+    width: 95%;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .form-title {
@@ -260,10 +249,7 @@
     color: var(--color-text-secondary);
 }
 
-/* ============================================ */
-/* BUTTONS */
-/* ============================================ */
-
+/* --- BUTTONS --- */
 /* Submit Button */
 .btn-submit {
     width: auto;
@@ -304,7 +290,7 @@
     border-color: rgba(255, 255, 255, 0.25);
 }
 
-/* Pill Button Small - For navigation */
+/* Pill Button Small */
 .btn-pill-sm {
     background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -338,17 +324,6 @@
     z-index: 10;
 }
 
-@media (max-width: 480px) {
-    .nav-header {
-        padding: 0.75rem 1rem;
-    }
-
-    .btn-pill-sm {
-        padding: 0.4rem 0.75rem;
-        font-size: 0.75rem;
-    }
-}
-
 /* Button Group */
 .btn-group-bottom {
     display: flex;
@@ -361,10 +336,7 @@
     opacity: 0.6;
 }
 
-/* ============================================ */
-/* LOCKED STATE */
-/* ============================================ */
-
+/* --- LOCKED STATE --- */
 .locked-state .lock-emoji {
     font-size: 2rem;
     margin-bottom: 0.75rem;
@@ -389,24 +361,14 @@
     font-style: italic;
 }
 
-/* ============================================ */
-/* PAGE HEADER & NAVIGATION */
-/* ============================================ */
-
-.page-header {
-    position: relative;
-    z-index: 10;
-}
-
+/* --- PAGE HEADER & NAVIGATION --- */
+.page-header,
 .page-back {
     position: relative;
     z-index: 10;
 }
 
-/* ============================================ */
-/* SNOWFALL PAGE */
-/* ============================================ */
-
+/* --- SNOWFALL PAGE --- */
 .snowfall-page .snowfall-container {
     position: absolute;
     top: 0;
@@ -416,10 +378,7 @@
     overflow: hidden;
 }
 
-/* ============================================ */
-/* ABOUT PAGE */
-/* ============================================ */
-
+/* --- ABOUT PAGE --- */
 .about-page {
     display: flex;
     flex-direction: column;
@@ -439,7 +398,7 @@
 }
 
 .about-title {
-    font-size: 2rem;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
     font-weight: 300;
     color: var(--color-text-primary);
 }
@@ -489,10 +448,7 @@
     opacity: 0.7;
 }
 
-/* ============================================ */
-/* RESPONSIVE */
-/* ============================================ */
-
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .title-main {
         font-size: 2rem;
@@ -545,6 +501,16 @@
     }
 }
 
+@media (max-width: 480px) {
+    .nav-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .btn-pill-sm {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.75rem;
+    }
+}
 
 .justify-content-start {
     justify-content: flex-start;

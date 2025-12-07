@@ -1,18 +1,18 @@
-// Configuration for Project December
+// CONFIGURATION
 const CONFIG = {
-    // API URL - automatically detects environment
+    // API
     API_URL: window.location.hostname === 'localhost'
         ? 'http://localhost:5000/api'
         : '/api',
 
-    // Character limits
+    // LIMITS
     CHAR_MIN: 4,
     CHAR_MAX: 1000,
 
-    // December check
+    // LOGIC
     isDecember: () => new Date().getMonth() === 11,
 
-    // Snowflake animation settings
+    // ANIMATION
     SNOWFLAKE: {
         MIN_SIZE: 8,
         MAX_SIZE: 12,
