@@ -172,5 +172,5 @@ app.use((req, res) => {
 
 // --- START ---
 app.listen(PORT, () => {
-    console.log(`PROJECT DECEMBER is running... \nhttp://localhost/${PORT}`);
+    console.log(`PROJECT DECEMBER is running... \nhttp://localhost:${PORT}`);
 });
