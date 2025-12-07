@@ -97,6 +97,7 @@ button {
     letter-spacing: 0.5px;
     position: relative;
     overflow: hidden;
+    z-index: 200;
 }
 
 button::before {
@@ -130,6 +131,7 @@ a.btn-back {
     position: relative;
     overflow: hidden;
     font-weight: 600;
+    z-index: 200;
 }
 
 /* Primary Button */
@@ -347,7 +349,7 @@ textarea:focus {
 .controls,
 .snowfall-info {
     position: relative;
-    z-index: 10;
+    z-index: 200;
 }
 
 .snowfall-info {
@@ -596,11 +598,23 @@ textarea:focus {
 
 @keyframes fall {
     0% {
-        transform: translateY(-10vh) translateX(0);
+        transform: translateY(-10vh) translateX(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(20vh) translateX(15px) rotate(45deg);
+    }
+
+    50% {
+        transform: translateY(50vh) translateX(-15px) rotate(90deg);
+    }
+
+    75% {
+        transform: translateY(80vh) translateX(15px) rotate(135deg);
     }
 
     100% {
-        transform: translateY(110vh) translateX(20px);
+        transform: translateY(110vh) translateX(10px) rotate(180deg);
     }
 }
 
