@@ -75,7 +75,7 @@ app.get('/api/messages', async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('messages')
-            .select('id, text, created_at');
+            .select('id, text, created_at, likes'); // Added likes
 
         if (error) throw error;
 
@@ -89,6 +89,47 @@ app.get('/api/messages', async (req, res) => {
         res.json(data.slice(0, limit));
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.post('/api/messages/:id/like', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Use RPC if available for atomic increment, otherwise standard update
+        // Assuming simple update for now based on context
+        const { data, error } = await supabase.rpc('increment_likes', { row_id: id });
+
+        if (error) {
+            // Fallback if RPC doesn't exist (though RPC is better for concurrency)
+            // If user just added a column, they probably didn't add a function.
+            // Let's do a read-modify-write as a simple fallback or just direct update if possible?
+            // Supabase doesn't support 'increment' in simple update without RPC.
+            // Let's try to just fetch and update.
+            const { data: msg, error: fetchError } = await supabase
+                .from('messages')
+                .select('likes')
+                .eq('id', id)
+                .single();
+
+            if (fetchError) throw fetchError;
+
+            const newLikes = (msg.likes || 0) + 1;
+
+            const { error: updateError } = await supabase
+                .from('messages')
+                .update({ likes: newLikes })
+                .eq('id', id);
+
+            if (updateError) throw updateError;
+
+            return res.json({ likes: newLikes });
+        }
+
+        res.json({ likes: data });
+    } catch (err) {
+        console.error('Like error:', err);
+        res.status(500).json({ error: 'Failed to like' });
     }
 });
 
@@ -109,7 +150,7 @@ app.post('/api/messages', confessionLimiter, async (req, res) => {
 
         const { data, error } = await supabase
             .from('messages')
-            .insert([{ text: sanitized }])
+            .insert([{ text: sanitized, likes: 0 }]) // Initialize likes
             .select();
 
         if (error) throw error;

@@ -416,13 +416,48 @@ function showModal(confession) {
         day: 'numeric'
     });
 
+    const isLiked = localStorage.getItem(`liked_${confession.id}`);
+    const likeCount = confession.likes || 0;
+
     modalBody.innerHTML = `
         <div class="modal-confession">${confession.text}</div>
-        <div class="modal-date">${date}</div>
+        <div class="modal-footer-row">
+            <div class="modal-date">${date}</div>
+            <button class="btn-like ${isLiked ? 'liked' : ''}" onclick="toggleLike('${confession.id}', this, ${isLiked ? 'true' : 'false'})">
+                <i class="bi bi-heart${isLiked ? '-fill' : ''}"></i>
+                <span class="like-count">${likeCount}</span>
+            </button>
+        </div>
     `;
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+}
+
+async function toggleLike(id, btn, alreadyLiked) {
+    if (alreadyLiked) return; // Prevent multiple likes for now
+
+    const countSpan = btn.querySelector('.like-count');
+    const icon = btn.querySelector('i');
+
+    // Optimistic UI update
+    btn.classList.add('liked');
+    icon.classList.remove('bi-heart');
+    icon.classList.add('bi-heart-fill');
+    countSpan.textContent = parseInt(countSpan.textContent) + 1;
+    btn.onclick = null; // Disable further clicks immediately
+
+    // Save to local storage
+    localStorage.setItem(`liked_${id}`, 'true');
+
+    try {
+        const response = await fetch(`${CONFIG.API_URL}/messages/${id}/like`, { method: 'POST' });
+        if (!response.ok) throw new Error('Failed to like');
+        // Optional: Update with actual server count if needed
+    } catch (error) {
+        console.error('Like error:', error);
+        // Revert UI if needed, but for a simple "like", usually not necessary to be strict
+    }
 }
 
 function closeModal() {

@@ -97,7 +97,6 @@ button {
     letter-spacing: 0.5px;
     position: relative;
     overflow: hidden;
-    z-index: 200;
 }
 
 button::before {
@@ -131,7 +130,6 @@ a.btn-back {
     position: relative;
     overflow: hidden;
     font-weight: 600;
-    z-index: 200;
 }
 
 /* Primary Button */
@@ -349,7 +347,7 @@ textarea:focus {
 .controls,
 .snowfall-info {
     position: relative;
-    z-index: 200;
+    z-index: 60;
 }
 
 .snowfall-info {
@@ -598,23 +596,11 @@ textarea:focus {
 
 @keyframes fall {
     0% {
-        transform: translateY(-10vh) translateX(0) rotate(0deg);
-    }
-
-    25% {
-        transform: translateY(20vh) translateX(15px) rotate(45deg);
-    }
-
-    50% {
-        transform: translateY(50vh) translateX(-15px) rotate(90deg);
-    }
-
-    75% {
-        transform: translateY(80vh) translateX(15px) rotate(135deg);
+        transform: translateY(-10vh) translateX(0);
     }
 
     100% {
-        transform: translateY(110vh) translateX(10px) rotate(180deg);
+        transform: translateY(110vh) translateX(20px);
     }
 }
 
@@ -633,11 +619,101 @@ textarea:focus {
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .modal-container {
-        padding: 1.5rem;
+        padding: 0;
+        width: 95%;
     }
 
     .music-control {
         bottom: 1rem;
         right: 1rem;
+    }
+}
+
+/* --- MODAL REFINEMENTS & LIKE BUTTON --- */
+.modal-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-date {
+    border-top: none;
+    /* Reset existing style */
+    padding-top: 0;
+    margin-top: 0;
+    font-size: 0.85rem;
+}
+
+.btn-like {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-like:hover {
+    background: rgba(255, 105, 180, 0.1);
+    border-color: rgba(255, 105, 180, 0.3);
+    color: #ff69b4;
+    /* Hot pink for like */
+    transform: translateY(-2px);
+}
+
+.btn-like.liked {
+    background: rgba(255, 105, 180, 0.2);
+    border-color: rgba(255, 105, 180, 0.5);
+    color: #ff69b4;
+}
+
+.btn-like i {
+    font-size: 1rem;
+}
+
+/* Responsive Modal Typography */
+.modal-confession {
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    /* Responsive font size */
+    line-height: 1.7;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Custom scrollbar for modal text */
+.modal-confession::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-confession::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.modal-confession::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 1.5rem;
+        /* Width handled by container */
+    }
+
+    .modal-footer-row {
+        margin-top: 1.5rem;
+    }
+
+    .btn-like {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
     }
 }
