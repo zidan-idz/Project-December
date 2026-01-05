@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.db
+.DS_Store
+*.log
+npm-debug.log*
+.vscode/
+NOTE.md
+seed_data.sql
